@@ -28,7 +28,7 @@ Create these files in Visual Studio Code:
 
 # Part 1 HTML
 1. Starting with the <head> tag, change the current title 'Document' to 'Simple Calculator'.
-2. Next we want to link our CSS script and JS script. After the steps your <head> tag should look like this:
+2. Next we want to link our CSS script and JS script. After the steps, your <head> tag should look like this:
 ```
 <head>
     <meta charset="UTF-8">
@@ -38,3 +38,13 @@ Create these files in Visual Studio Code:
     <script src="script.js" defer></script>
 </head>
 ```
+3. We want to make the layout of our calculator. Most if not all calculators use a grid layout. To create this grid layout use the <div> tag. In the <body> tag implement the <div> tag with the class name 'simple calculator-grid'.
+4. To create the output screen for the calculator we need 3 <div> tags. One <div> tag contains the other 2 <div> tags. The <div> containing the other two will have the class name 'output'. The other two class names will be 'previous' and 'current'.
+```
+ <div class="calculator-grid">
+    <div class="output">
+      <div data-previous-operand class="previous-operand"></div>
+      <div data-current-operand class="current-operand"></div>
+    </div>
+```
+
