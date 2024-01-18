@@ -29,6 +29,7 @@ Create these files in Visual Studio Code:
 # Part 1 HTML
 1. Starting with the <head> tag, change the current title 'Document' to 'Simple Calculator'.
 2. Next we want to link our CSS script and JS script. After the steps your <head> tag should look like this:
+```
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -36,3 +37,4 @@ Create these files in Visual Studio Code:
     <link href="styles.css" rel="stylesheet"
     <script src="script.js" defer></script>
 </head>
+```
