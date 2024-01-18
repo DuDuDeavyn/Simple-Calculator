@@ -1,6 +1,7 @@
 # Simple-Calculator
 
-Description:
+# Description
+-------------
 
 
 This project is an intermediate-level project.
