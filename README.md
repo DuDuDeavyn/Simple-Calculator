@@ -1,5 +1,8 @@
 # Simple-Calculator
 
+Description:
+
+
 This project is an intermediate-level project.
 Pre-reqs would be:
 1. Familiarity of JavaScript
