@@ -47,7 +47,7 @@ Create these files in Visual Studio Code:
       <div data-current-operand class="current-operand"></div>
     </div>
 ```
-5. Now we want to create the buttons for our calculator in the div tag right after the 'output' class. The first button will be the AC or all-clear button. This button will be huge and to set it up we need a class for it. To set it up we need `<button class="span-two">AC</button>`. For the rest of the buttons we only need `<button>operation</button>`, 'operation' being the numbers and arithmetic operations. The last button will be the '=' sign and it will take up two spaces.
+5. Now we want to create the buttons for our calculator in the div tag right after the 'output' class. The first button will be the AC or all-clear button. This button will be huge and to set it up we need a class for it. To set it up we need `<button class="span-two">AC</button>`. For the rest of the buttons we only need `<button>data-fill</button>`, 'fill' being number for the number buttons and operation for the arithmetic operation numbers. The last button will be the '=' sign and it will take up two spaces.
 ```
  <button data-all-clear class="span-two">AC</button>
     <button data-delete>DEL</button>
@@ -87,11 +87,182 @@ body {
   background: linear-gradient(to right, #00AAFF, #00FF6C);
 }
 ```
-5. Now to create the grid for our calculator, select the `calculator-grid`.
+5. Now to create the grid for our calculator, select the `calculator-grid` class we created.
 ```
 .calculator-grid {
 
 }
 ```
 6. Next we want to edit the layout for the calculator we need to input these items: `display`, `justify-content`, `align-items`, `min-height`, `grid-template-columns`, `grid-template-rows`.
-7. Set `display` to grid, `justify-content` to center, `align-items` to center, `min-height` to 100vh, `grid-template-columns` to repeat(4, 100px),  `grid-template-columns` to minmax(120xpx, auto) repeat(5, 100px).
+7. Set `display` to grid, `justify-content` to center, `align-content` to center, `min-height` to 100vh, `grid-template-columns` to repeat(4, 100px),  `grid-template-columns` to minmax(120xpx, auto) repeat(5, 100px).
+8. Notice the calculator buttons are lacking color and the numbers look really small? We can customize this by selecting the `.calculator-grid > button` class. Set `cursor:` to pointer, `font-size:` to 2rem, `border:` to 1px solid white, `outline:` to none, and `background-color:` to rgba(55, 255, 255, .75).
+```
+  .calculator-grid > button {
+
+  }
+```
+9. Now we want to make it when the cursor hovers over the button it changes color. To do so create another function just like we did in the previous step but instead put `.calculator-grid > button:hover` and set the `background-color:` to `rgba(255, 255, 255, .9)`
+
+10. You've probably noticed that the buttons now are in the right places but the 'AC' button and '=' button aren't taking up two spaces. To fix that we need to call the class `.span-two` and inside the class set `grid-column: span 2`.
+11. Now the output looks like it's a button but we want it to have its own screen above the rest of our buttons. We call the output class and set its column to 1 / -1. Next, set its `background-color:` to black with 75 transparency.
+```
+.output {
+    grid-column: 1 / -1;
+    background-color: rgba(0, 0, 0, .75);
+}
+```
+11. We then want to format the current and previous operands in our output screen. To do so we need to add the following: `display: flex;`, `align-items: flex-end;`, `justify-content: space-around;`, `flex-direction: column;`, `padding: 10px;`, `word-wrap: break-word;`, and `word-break: break-all;`.
+12. Now the text sizes are not filling up the screen too well so we can call the classes for both the previous and current operand to fix that.
+```
+.output .previous-operand {
+  color: rgba(255, 255, 255, .75);
+  font-size: 1.5rem;
+}
+
+.output .current-operand {
+  color: white;
+  font-size: 2.5rem;
+}
+```
+# Part 3 JS
+1. We want to select our buttons and to do so we need to create the variables for them.
+```
+const numberButtons = document.querySelectorAll('[data-number]')
+const operationButtons = document.querySelectorAll('[data-operation]')
+const equalsButton = document.querySelector('[data-equals]')
+const deleteButton = document.querySelector('[data-delete]')
+const allClearButton = document.querySelector('[data-all-clear]')
+const previousOperandTextElement = document.querySelector('[data-previous-operand]')
+const currentOperandTextElement = document.querySelector('[data-current-operand]')
+```
+2. Now we want to make a `calculator class` to store all the information so that our calculator can function properly. Place it atop the variables we just created. We then want to create a constructor method to store all the inputs and functions for our calculator. The constructor method will take on two arguments `perviousOperandTextElement` and `currentOperandTextElement`. Then add the following to the method: `this.previousOperandTextElement = previousOperandTextElement`, `this.currentOperandTextElement = currentOperandTextElement`, `this.clear()`.
+3. Next we need to create the following functions:
+```
+ clear() {
+    this.currentOperand = ''
+    this.previousOperand = ''
+    this.operation = undefined
+  }
+
+  delete() {
+    this.currentOperand = this.currentOperand.toString().slice(0, -1)
+  }
+
+  appendNumber(number) {
+    if (number === '.' && this.currentOperand.includes('.')) return
+    this.currentOperand = this.currentOperand.toString() + number.toString()
+  }
+
+  chooseOperation(operation) {
+    if (this.currentOperand === '') return
+    if (this.previousOperand !== '') {
+      this.compute()
+    }
+    this.operation = operation
+    this.previousOperand = this.currentOperand
+    this.currentOperand = ''
+  }
+
+  compute() {
+    let computation
+    const prev = parseFloat(this.previousOperand)
+    const current = parseFloat(this.currentOperand)
+    if (isNaN(prev) || isNaN(current)) return
+    switch (this.operation) {
+      case '+':
+        computation = prev + current
+        break
+      case '-':
+        computation = prev - current
+        break
+      case '*':
+        computation = prev * current
+        break
+      case '÷':
+        computation = prev / current
+        break
+      default:
+        return
+    }
+    this.currentOperand = computation
+    this.operation = undefined
+    this.previousOperand = ''
+  }
+
+  getDisplayNumber(number) {
+    const stringNumber = number.toString()
+    const integerDigits = parseFloat(stringNumber.split('.')[0])
+    const decimalDigits = stringNumber.split('.')[1]
+    let integerDisplay
+    if (isNaN(integerDigits)) {
+      integerDisplay = ''
+    } else {
+      integerDisplay = integerDigits.toLocaleString('en', { maximumFractionDigits: 0 })
+    }
+    if (decimalDigits != null) {
+      return `${integerDisplay}.${decimalDigits}`
+    } else {
+      return integerDisplay
+    }
+  }
+
+  updateDisplay() {
+    this.currentOperandTextElement.innerText =
+      this.getDisplayNumber(this.currentOperand)
+    if (this.operation != null) {
+      this.previousOperandTextElement.innerText =
+        `${this.getDisplayNumber(this.previousOperand)} ${this.operation}`
+    } else {
+      this.previousOperandTextElement.innerText = ''
+    }
+  }
+```
+These functions all carry out the operations of our calculator. When a function is called the actions in the function are carried out. Some functions take on arguments, these functions take the given input and deliver an output. When a function that takes arguments is called but with no given input or argument a default output will be returned.
+
+The `clear function` is pretty straightforward, it sets the screen blank when it is called. The `delete()` function deletes the current number every time it is called. The `appendNumber()` function adds numbers to the screen. The `chooseOperation()` function deals with whenever the user clicks an operation. The `comp[ut()` function returns the results of the operation(s). The last function is the `updateDisplay()` function updates the values inside of the output screen.
+4. After creating all the functions we then need to set up the variables we previously created to operate on our calculator. To do so we need to create a calculator object.
+```
+const calculator = new Calculator(previousOperandTextElement, currentOperandTextElement)
+```
+5. We then want to create a listener for our number buttons. Then we want it to append the numbers when number buttons are pressed.
+```
+numberButtons.forEach(button => {
+  button.addEventListener('click', () => {
+    calculator.appendNumber(button.innerText)
+    calculator.updateDisplay()
+  })
+})
+```
+6. For the next functions they all follow the same steps where we create a function for the type of button and create a listener. These functions carry out the ability of the calculator to carry out the operations of our calculator by listening for inputs and giving an output.
+```
+operationButtons.forEach(button => {
+  button.addEventListener('click', () => {
+    calculator.chooseOperation(button.innerText)
+    calculator.updateDisplay()
+  })
+})
+
+equalsButton.addEventListener('click', button => {
+  calculator.compute()
+  calculator.updateDisplay()
+})
+
+allClearButton.addEventListener('click', button => {
+  calculator.clear()
+  calculator.updateDisplay()
+})
+
+deleteButton.addEventListener('click', button => {
+  calculator.delete()
+  calculator.updateDisplay()
+})
+```
+
+
+
+
+
+
+
+
+
